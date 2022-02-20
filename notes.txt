@@ -8,12 +8,14 @@ INSERT INTO menu_item VALUES (4, 'Garlic Bread', 'Cheesy garlic butter spread on
 
 INSERT INTO restaurant VALUES (2, 'The Red Dragon');
 
-INSERT INTO menu_item VALUES (1, 'Beef with Brocolli', 'Stir-fried beef and vegetable medley.', 14, '{"beef"}', 1);
-INSERT INTO menu_item VALUES (2, 'Shrimp Fried Rice', 'You're telling me a shrimp fried this rice?', 8, '{"shrimp", "shellfish", "gluten", "eggs", "garlic"}, 1);
-INSERT INTO menu_item VALUES (3, 'Kung Pao Chicken', 'Salty, sweet, and spicy stir-fried chicken', 12, '{"chicken", "garlic", "nuts"}', 1);
-INSERT INTO menu_item VALUES (4, 'Mapo Tofu', 'Numbing tofu dish served with ground pork', 8, '{"garlic", "pork", "bean", "tofu"}', 1);
+INSERT INTO menu_item VALUES (5, 'Beef with Brocolli', 'Stir-fried beef and vegetable medley.', 14, '{"beef"}', 1);
+INSERT INTO menu_item VALUES (6, 'Shrimp Fried Rice', 'You're telling me a shrimp fried this rice?', 8, '{"shrimp", "shellfish", "gluten", "eggs", "garlic"}, 1);
+INSERT INTO menu_item VALUES (7, 'Kung Pao Chicken', 'Salty, sweet, and spicy stir-fried chicken', 12, '{"chicken", "garlic", "nuts"}', 1);
+INSERT INTO menu_item VALUES (8, 'Mapo Tofu', 'Numbing tofu dish served with ground pork', 8, '{"garlic", "pork", "bean", "tofu"}', 1);
 
-
+Count Dracula - garlic, med; pork, high
+Joe Koh - nuts, high; shellfish, low
+Taylor Swift - none
 
 - interoperability - could work with external health providers
 - extensibility - same dataset could be used for other applications - vegan, pregnant, etc
