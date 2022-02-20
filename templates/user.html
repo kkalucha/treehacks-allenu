@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+
+<style>
+    body{
+        font-family: Helvetica, sans-serif;
+        background-color: beige;
+        color: black;
+        font-size: medium;
+    }
+
+</style>
+    
+
+<body>
+<h2>Hello {{ user.name }}!</h2>
+
+<h3>Listed Allergies</h3>
+<ul style="list-style-type:none;">
+    {% for allergy in user.allergies %}
+    <li> <p>{{ allergy }}</p>
+    {% endfor %}
+</ul>
+
+</body>
+</html>

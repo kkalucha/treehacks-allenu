@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Menu</title>
+    <link rel="shortcun icon" href="#" />
+</head>
+
+<style>
+    body{
+        font-family: Helvetica, sans-serif;
+        background-color: beige;
+        color: black;
+        font-size: medium;
+    }
+
+    .rtitle{
+        font-weight: bold;
+        font-size: xx-large;
+        font-family: Arial, Helvetica, sans-serif;
+    }
+
+    input[type=text] {
+        font-weight: bold;
+        font-size: xx-large;
+        font-family: Arial, Helvetica, sans-serif;
+    }
+
+    input{
+        outline: 0ch;
+        border: 0ch;
+        background-color: transparent;
+    }
+
+    h3{
+        display: inline;
+        font-weight: bold;
+    }
+
+    p{
+        font-style: italic;
+        font-size: small;
+    }
+</style>
+
+<body>
+    <form class="rtitle">
+        <label for="restaurant">Restaurant Menu: </label>
+        <input type="text">
+    </form>
+
+    <ul style="list-style-type:none;">
+    {% for item in menu %}
+    <li>  
+        <h3>
+            {% if item.severity == 0 %}
+                &#9989;
+            {% elif item.severity == 1 %} 
+                &#9888; 
+            {% else %} 
+                &#10060;
+            {% endif %}
+            
+            {{ item.name }}
+        </h3> | {{ item.price}}
+    </li>
+    <p> {{ item.description }} </p>
+    
+    <br>
+    {% endfor %}
+    </ul>
+
+</body>
+</html>
