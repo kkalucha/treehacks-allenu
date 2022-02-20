@@ -8,7 +8,7 @@
 <style>
     body{
         font-family: Helvetica, sans-serif;
-        background-color: beige;
+        background-color: lavender;
         color: black;
         font-size: medium;
     }
@@ -40,6 +40,10 @@
         top: 0px;
         width: 100%;
     }
+
+    li {
+        padding: 2em;
+    }
 </style>
 
 <body>
@@ -58,14 +62,16 @@
         <ul style="list-style-type:none;">
         {% for item, severity in menu %}
             {% if severity == 0 %}
-                <li style= "background-color:green">
+                <li>
             {% elif severity == 1 %}
-                <li style= "background-color:yellow">
+                <li style= "background-color:lightgoldenrodyellow">
+            {% elif severity == 2 %}
+                <li style= "background-color:lightorange">
             {% else %}
-                <li style= "background-color:red">
-             {% endif %}
+                <li style="background-color:lightred">
+            {% endif %}
                 <h3> {{ item.name }} </h3> | {{ item.price}}
-                <p> \n {{ item.description }} </p>
+                <p> {{ item.description }} </p>
             </li>
 
             <br>
