@@ -40,12 +40,18 @@ def get_user_allergies(user_id):
 @app.route("/", methods=["GET", "POST"])
 def index():
     if request.method == "GET":
-        user_id = request.cookies.get("user_id") or request.args.get("user_id")
+        user_id = request.args.get("user_id") or request.cookies.get("user_id")
         if not user_id:
             return render_template("index.jinja2")
         resp = make_response(redirect(url_for("allergies")))
         resp.set_cookie("user_id", user_id)
         return resp
+
+@app.route("/logout", methods=["GET"])
+def logout():
+    resp = make_response(redirect(url_for("index")))
+    resp.delete_cookie("user_id")
+    return resp
 
 @app.route("/allergies", methods=["GET", "POST", "DELETE"])
 def allergies():
