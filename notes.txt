@@ -13,9 +13,9 @@ INSERT INTO menu_item VALUES (6, 'Shrimp Fried Rice', 'You''re telling me a shri
 INSERT INTO menu_item VALUES (7, 'Kung Pao Chicken', 'Salty, sweet, and spicy stir-fried chicken', 12, '{"chicken", "garlic", "nuts"}', 1);
 INSERT INTO menu_item VALUES (8, 'Mapo Tofu', 'Numbing tofu dish served with ground pork', 8, '{"garlic", "pork", "bean", "tofu"}', 1);
 
-Count Dracula - garlic, med; pork, high
-Joe Koh - nuts, high; shellfish, low
-Taylor Swift - none
+Count Dracula - garlic, low; pork, high [id: 11540]
+Joe Koh - nuts, high; olive oil, low [id: 11539]
+Taylor Swift - none [id: 11538]
 
 - interoperability - could work with external health providers
 - extensibility - same dataset could be used for other applications - vegan, pregnant, etc
