@@ -9,18 +9,32 @@
         font-size: medium;
     }
 
-    div{
+    .div{
         position: absolute;
         top: 30%;
         left: 30%;
         width: 40%;
         height: 70%;
     }
+
+    .nav {
+        position: fixed;
+        top: 0px;
+        width: 100%;
+    }
 </style>
 
 
 <body>
-<div>
+<div class="nav">
+    <a href="logout" style="
+    float: right;
+    margin-right: 5em;
+    margin-top: 1em;
+">Log out</a>
+</div>
+
+<div class="main">
     <h2>Hello {{ user_name }}!</h2>
 
     <h3>Listed Allergies</h3>

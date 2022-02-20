@@ -1,7 +1,5 @@
 from flask import Flask, render_template, request, abort
 from flask.helpers import make_response, url_for
-from werkzeug.exceptions import MethodNotAllowed
-from werkzeug.sansio.response import Response
 from werkzeug.utils import redirect
 import requests
 from flask_sqlalchemy import SQLAlchemy
