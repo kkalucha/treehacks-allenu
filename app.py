@@ -7,18 +7,20 @@ import requests
 from flask_sqlalchemy import SQLAlchemy
 import os
 from urllib.parse import urljoin
+from flask_migrate import Migrate
 
 app = Flask(__name__)
 app.config.from_object(os.environ['APP_SETTINGS'])
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
+migrate = Migrate(app, db)
 
 from models import Restaurant
 
 IRIS_BASE_URL = os.environ["IRIS_BASE_URL"]
 IRIS_AUTH_KEY = os.environ["IRIS_AUTH_KEY"]
 
-headers = {"x-auth": IRIS_AUTH_KEY, "accept": "application/fhir+json"}
+headers = {"x-api-key": IRIS_AUTH_KEY, "accept": "application/fhir+json"}
 
 severity_mapping = {
     "low": 1,
@@ -31,49 +33,43 @@ def get_user_allergies(user_id):
     allergies_list = []
     if allergies_r["total"]:
         allergies_raw = allergies_r["entry"]
-        allergies_list = list(map(lambda x: (x["code"]["text"], x["criticality"])), filter(lambda x: x["type"] == "allergy" and "food" in x["category"], allergies_raw))
+        allergies_list = list(map(lambda x: (x["resource"]["code"]["text"], x["resource"]["criticality"]), filter(lambda x: x["resource"]["type"] == "allergy" and "food" in x["resource"]["category"], allergies_raw)))
     return allergies_list
 
 
-@app.route("/", method=["GET", "POST"])
+@app.route("/", methods=["GET", "POST"])
 def index():
     if request.method == "GET":
-        user_id = request.args.get("user_id")
+        user_id = request.cookies.get("user_id") or request.args.get("user_id")
         if not user_id:
-            return render_template("index.html")
-        return redirect(url_for("/allergies"))
-
-    if request.method == "POST":
-        if "user_id" not in request.form:
-            return redirect(url_for("/"))
-
-        resp = make_response(redirect(url_for("/allergies")))
-        resp.set_cookie("user_id", request.form["user_id"])
+            return render_template("index.jinja2")
+        resp = make_response(redirect(url_for("allergies")))
+        resp.set_cookie("user_id", user_id)
         return resp
 
-@app.route("/allergies", method=["GET", "POST", "DELETE"])
+@app.route("/allergies", methods=["GET", "POST", "DELETE"])
 def allergies():
     if request.method == "GET":
         if "user_id" not in request.cookies:
-            return redirect(url_for("/"))
+            return redirect(url_for("index"))
         user_id = request.cookies["user_id"]
         user_r = requests.get(urljoin(IRIS_BASE_URL, f"Patient/{user_id}"), headers=headers).json()
         user_name = f"{user_r['name'][0]['given'][0]} {user_r['name'][0]['family']}"
 
-        return render_template("user.html", user_name=user_name, allergies_list=get_user_allergies(user_id))
+        return render_template("user.jinja2", user_name=user_name, allergies_list=get_user_allergies(user_id))
 
     if request.method == "POST":
         requests.post(urljoin(IRIS_BASE_URL, "AllergyIntolerance"), data=request.data, headers=headers)
-        return redirect(url_for("/allergies"))
+        return redirect(url_for("allergies"))
 
     if request.method == "DELETE":
         requests.delete(urljoin(IRIS_BASE_URL, "AllergyIntolerance"), data=request.data, headers=headers)
-        return redirect(url_for("/allergies"))
+        return redirect(url_for("allergies"))
 
-@app.route("/menu/<int:id>", method=["GET"])
+@app.route("/menu/<int:id>", methods=["GET"])
 def menu(id):
     if "user_id" not in request.cookies:
-        return redirect(url_for("/"))
+        return redirect(url_for("index"))
     user_id = request.cookies["user_id"]
     allergies = get_user_allergies(user_id)
     restaurant = Restaurant.query.filter_by(id=id).first()
@@ -85,10 +81,10 @@ def menu(id):
         severity = 0
         for ingredient in i.ingredients:
             for allergy in allergies:
-                if ingredient in allergy[0]:
+                if ingredient.lower() in allergy[0].lower():
                     severity = max(severity, severity_mapping[allergy[1]])
         res.append((i, severity))
-    return res
+    return render_template("menu.jinja2", items=res, name=restaurant.name)
 
 # @app.route('/restaurant/<restaurant>')
 # def menu(restaurant):

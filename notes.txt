@@ -1,0 +1,12 @@
+INSERT INTO restaurant VALUES (1, 'Ristorante Il Porcino');
+
+INSERT INTO menu_item VALUES (1, 'Shrimp Scampi', 'Shrimp sauteed in olive oil served with pasta.', 20, '{"shrimp", "shellfish", "butter", "olive oil", "garlic", "white wine"}, 1);
+INSERT INTO menu_item VALUES (2, 'Pesto Gnocchi', 'Potato gnocchi with pesto.', 16, '{"nuts", "olive oil", "potato", "garlic", "cheese"}', 1);
+INSERT INTO menu_item VALUES (3, 'Lobster Spaghetti', 'Spaghetti with lobster.', 24, '{"lobster", "shellfish", "onion", "celery", "garlic", "basil", "cream", "spaghetti", "butter"}', 1);
+INSERT INTO menu_item VALUES (4, 'Garlic Bread', 'Cheesy garlic butter spread on toasted bread.', 8, '{"garlic", "bread", "butter", "cheese"}', 1);
+
+- interoperability - could work with external health providers
+- extensibility - same dataset could be used for other applications - vegan, pregnant, etc
+
+- mental health - [drake study]
+-- both an acute problem with chronic thinking about it

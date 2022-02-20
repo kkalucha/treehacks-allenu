@@ -14,7 +14,7 @@ class MenuItem(db.Model):
     name = db.Column(db.String())
     description = db.Column(db.String())
     price = db.Column(db.Float())
-    ingredients = db.Column(db.Array(db.String()))
+    ingredients = db.Column(db.ARRAY(db.String()))
 
     restaurant_id = db.Column(db.Integer, db.ForeignKey("restaurant.id"))
 
