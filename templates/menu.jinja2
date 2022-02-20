@@ -57,22 +57,18 @@
 
         <ul style="list-style-type:none;">
         {% for item, severity in menu %}
-        <li>
-            <h3>
-                {% if severity == 1 %}
-                    &#9989;
-                {% elif severity == 2 %}
-                    &#9888;
-                {% else %}
-                    &#10060;
-                {% endif %}
+            {% if severity == 0 %}
+                <li style= "background-color:green">
+            {% elif severity == 1 %}
+                <li style= "background-color:yellow">
+            {% else %}
+                <li style= "background-color:red">
+             {% endif %}
+                <h3> {{ item.name }} </h3> | {{ item.price}}
+                <p> \n {{ item.description }} </p>
+            </li>
 
-                {{ item.name }}
-            </h3> | {{ item.price}}
-        </li>
-        <p> {{ item.description }} </p>
-
-        <br>
+            <br>
         {% endfor %}
         </ul>
     </div>
