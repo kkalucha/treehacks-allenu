@@ -1,38 +1,105 @@
-from flask import Flask, render_template
+from flask import Flask, render_template, request, abort
+from flask.helpers import make_response, url_for
+from werkzeug.exceptions import MethodNotAllowed
+from werkzeug.sansio.response import Response
+from werkzeug.utils import redirect
+import requests
+from flask_sqlalchemy import SQLAlchemy
+import os
+from urllib.parse import urljoin
 
 app = Flask(__name__)
+app.config.from_object(os.environ['APP_SETTINGS'])
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+db = SQLAlchemy(app)
 
-class Item:
-    def __init__(self, name, price, description, severity):
-        self.name = name
-        self.price = price
-        self.description = description
-        self.severity = severity
+from models import Restaurant
 
-class User:
-    def __init__(self, name, allergies):
-        self.name = name
-        self.allergies = allergies
+IRIS_BASE_URL = os.environ["IRIS_BASE_URL"]
+IRIS_AUTH_KEY = os.environ["IRIS_AUTH_KEY"]
 
-@app.route('/')
+headers = {"x-auth": IRIS_AUTH_KEY, "accept": "application/fhir+json"}
+
+severity_mapping = {
+    "low": 1,
+    "med": 2,
+    "high": 3
+}
+
+def get_user_allergies(user_id):
+    allergies_r = requests.get(urljoin(IRIS_BASE_URL, "AllergyIntolerance"), headers=headers, params={"patient": user_id}).json()
+    allergies_list = []
+    if allergies_r["total"]:
+        allergies_raw = allergies_r["entry"]
+        allergies_list = list(map(lambda x: (x["code"]["text"], x["criticality"])), filter(lambda x: x["type"] == "allergy" and "food" in x["category"], allergies_raw))
+    return allergies_list
+
+
+@app.route("/", method=["GET", "POST"])
 def index():
-    return render_template('index.html')
+    if request.method == "GET":
+        user_id = request.args.get("user_id")
+        if not user_id:
+            return render_template("index.html")
+        return redirect(url_for("/allergies"))
 
-@app.route('/user/<username>')
-def user(username):
-    test_user = User("Joe", ["Nuts", "Shrimp"])
-    return render_template('user.html', user=test_user)
+    if request.method == "POST":
+        if "user_id" not in request.form:
+            return redirect(url_for("/"))
 
-@app.route('/restaurant/<restaurant>')
-def menu(restaurant):
-    test_items = [
-        Item("Shrimp Scampi", 24, "Shrimp sauteed in olive oil served with pasta", 2),
-        Item("Caesar Salad", 14, "Caesar diff", 0),
-        Item("Mushroom Soup", 16, "soup diff", 0),
-        Item("Pepperoni Pizza", 18, "The House Special", 1)
-    ]
+        resp = make_response(redirect(url_for("/allergies")))
+        resp.set_cookie("user_id", request.form["user_id"])
+        return resp
 
-    return render_template('menu.html', menu=test_items)
- 
+@app.route("/allergies", method=["GET", "POST", "DELETE"])
+def allergies():
+    if request.method == "GET":
+        if "user_id" not in request.cookies:
+            return redirect(url_for("/"))
+        user_id = request.cookies["user_id"]
+        user_r = requests.get(urljoin(IRIS_BASE_URL, f"Patient/{user_id}"), headers=headers).json()
+        user_name = f"{user_r['name'][0]['given'][0]} {user_r['name'][0]['family']}"
+
+        return render_template("user.html", user_name=user_name, allergies_list=get_user_allergies(user_id))
+
+    if request.method == "POST":
+        requests.post(urljoin(IRIS_BASE_URL, "AllergyIntolerance"), data=request.data, headers=headers)
+        return redirect(url_for("/allergies"))
+
+    if request.method == "DELETE":
+        requests.delete(urljoin(IRIS_BASE_URL, "AllergyIntolerance"), data=request.data, headers=headers)
+        return redirect(url_for("/allergies"))
+
+@app.route("/menu/<int:id>", method=["GET"])
+def menu(id):
+    if "user_id" not in request.cookies:
+        return redirect(url_for("/"))
+    user_id = request.cookies["user_id"]
+    allergies = get_user_allergies(user_id)
+    restaurant = Restaurant.query.filter_by(id=id).first()
+    if not restaurant:
+        return abort(404)
+    items = restaurant.items
+    res = []
+    for i in items:
+        severity = 0
+        for ingredient in i.ingredients:
+            for allergy in allergies:
+                if ingredient in allergy[0]:
+                    severity = max(severity, severity_mapping[allergy[1]])
+        res.append((i, severity))
+    return res
+
+# @app.route('/restaurant/<restaurant>')
+# def menu(restaurant):
+#     test_items = [
+#         Item("Shrimp Scampi", 24, "Shrimp sauteed in olive oil served with pasta", 2),
+#         Item("Caesar Salad", 14, "Caesar diff", 0),
+#         Item("Mushroom Soup", 16, "soup diff", 0),
+#         Item("Pepperoni Pizza", 18, "The House Special", 1)
+#     ]
+
+#     return render_template('menu.html', menu=test_items)
+
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run()
