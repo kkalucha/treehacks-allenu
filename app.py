@@ -90,7 +90,7 @@ def menu(id):
                 if ingredient.lower() in allergy[0].lower():
                     severity = max(severity, severity_mapping[allergy[1]])
         res.append((i, severity))
-    return render_template("menu.jinja2", items=res, name=restaurant.name)
+    return render_template("menu.jinja2", menu=res, name=restaurant.name)
 
 # @app.route('/restaurant/<restaurant>')
 # def menu(restaurant):
