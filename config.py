@@ -6,11 +6,12 @@ class Config(object):
     TESTING = False
     CSRF_ENABLED = True
     SECRET_KEY = 'testing-secret-key'
-    SQLALCHEMY_DATABASE_URI = os.environ['DATABASE_URL']
+    SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URL').replace("://", "ql://", 1)
 
 
 class ProductionConfig(Config):
     DEBUG = False
+    SECRET_KEY = os.environ["PROD_SECRET_KEY"]
 
 
 class StagingConfig(Config):
