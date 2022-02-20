@@ -1,2 +1,70 @@
-<div>{{ name }}</div>
-<div>{{ items }}</div>
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Menu</title>
+    <link rel="shortcun icon" href="#" />
+</head>
+
+<style>
+    body{
+        font-family: Helvetica, sans-serif;
+        background-color: beige;
+        color: black;
+        font-size: medium;
+    }
+
+    h1{
+        font-weight: bold;
+        font-size: xx-large;
+        font-family: Cambria, Helvetica, sans-serif;
+    }
+
+
+    h3{
+        display: inline;
+        font-weight: bold;
+    }
+
+    p{
+        font-style: italic;
+        font-size: small;
+    }
+
+    div{
+        position: absolute;
+        top: 30%;
+        left: 50%;
+        margin-top: -50px;
+        margin-left: -50px;
+        width: 100px;
+        height: 100px;
+    }
+</style>
+
+<body>
+    <div>
+        <h1> {{ name }} </h1>
+
+        <ul style="list-style-type:none;">
+        {% for item, severity in menu %}
+        <li>  
+            <h3>
+                {% if severity == 1 %}
+                    &#9989;
+                {% elif severity == 2 %} 
+                    &#9888;
+                {% else %} 
+                    &#10060;
+                {% endif %}
+                
+                {{ item.name }}
+            </h3> | {{ item.price}}
+        </li>
+        <p> {{ item.description }} </p>
+        
+        <br>
+        {% endfor %}
+        </ul>
+    </div>
+</body>
+</html>
