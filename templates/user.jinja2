@@ -17,7 +17,7 @@
         height: 70%;
     }
 </style>
-    
+
 
 <body>
 <div>
@@ -28,6 +28,12 @@
         {% for allergy, severity in allergies_list %}
         <li> <p>{{ allergy }} | Severity {{severity}}</p>
         {% endfor %}
+    </ul>
+
+    <h3>Restaurants</h3>
+    <ul style="list-style-type:none;">
+        <li> <a href="menu/1"> Ristorante Il Porcino </a> </li>
+        <li> <a href="menu/2"> The Red Dragon </a> </li>
     </ul>
 </div>
 
